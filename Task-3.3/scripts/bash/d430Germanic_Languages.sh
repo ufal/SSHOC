@@ -1,0 +1,2 @@
+#!/bin/bash
+mkdir d430Germanic_Languages; cp -rfv PPN345204107_0013 d430Germanic_Languages/.; cp -rfv PPN345204107_0002 d430Germanic_Languages/.; cp -rfv PPN345204107_0005 d430Germanic_Languages/.; cp -rfv PPN345204107_0008 d430Germanic_Languages/.; 

@@ -1,0 +1,2 @@
+#!/bin/bash
+ mv -fv d020Librarianship.txt d020Librarianship/.; mv -fv d400Philology.txt d400Philology/.; mv -fv d430Germanic_Languages.txt d430Germanic_Languages/.; mv -fv d440Romance_Languages.txt d440Romance_Languages/.; mv -fv d510Mathematics.txt d510Mathematics/.; mv -fv d550Geology.txt d550Geology/.; mv -fv d700Arts.txt d700Arts/.; mv -fv d780Musicology.txt d780Musicology/.; mv -fv d900History.txt d900History/.;

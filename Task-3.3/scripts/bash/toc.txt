@@ -1,0 +1,9 @@
+d020Librarianship
+d400Philology
+d430Germanic_Languages
+d440Romance_Languages
+d510Mathematics
+d550Geology
+d700Arts
+d780Musicology
+d900History
