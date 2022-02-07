@@ -41,6 +41,7 @@
 6. Restructure every entry in countingNumberOfCharactersInEveryFile.txt.
 - (TODO: don't use ``hard-wired'' paths)
 - (TODO: check whether it still works within the current directory structure)
+- (TODO: add the missing sortingContentOfPlainTextFileAlphabetically.py and update the path)
 ```
   $ TODO/sortingContentOfPlainTextFileAlphabetically.py
 ```
@@ -49,16 +50,23 @@
 - (TODO: check whether TEI_DIR is correct here)
 - (TODO: don't use ``hard-wired'' paths)
 - (TODO: check whether it still works within the current directory structure)
+- (TODO: add the missing CountingPersonInListPerson.py and update the path)
 ```
-	$ TODO/CountingPersonInListPerson.py
+  $ TODO/CountingPersonInListPerson.py
 ```
 
 8. Create a list (TODO: what kind of a list?) with the following structure:
+- (TODO: why do we use German keywords?)
+- (TODO: don't use ``hard-wired'' paths)
+- (TODO: check whether it still works within the current directory structure)
+- (TODO: add the missing countToAnyGivenNumber.py and update the path)
+```
 =IDENTISCH(B2; E2)
 =IDENTISCH(B3; E3) 	
 =IDENTISCH(B4; E4) 
 … 
 =IDENTISCH(B204; E204)
+```
 Results are stored in counted.txt
 - (TODO: don't use ``hard-wired'' or relative paths)
 - (TODO: check whether it still works within the current directory structure)
@@ -73,17 +81,19 @@ Results are stored in counted.txt
   $ cp countingNumberOfCharactersInEveryFile.txt CountingPersonInListPerson.txt $OUTPUT_DIR/xls/.
 ```
 
-10. Cut the content from ??? (TODO: which file) and store it in checkIfPyScriptSelectsAllCharactersCorrectly.txt
-- (TODO: can we do this via one-liners?)
-- (TODO: don't use ``hard-wired'' paths)
+10. Cut the content from XXX (TODO: which file) and store it in checkIfPyScriptSelectsAllCharactersCorrectly.txt
+- (TODO: what is the separator in the files? is it default (TAB)?)
+- (TODO: check whether the command is correct)
 ```
-  $ TODO/checkIfPyScriptSelectsAllCharactersCorrectly.py 
+  $ cut -f6 XXX > checkIfPyScriptSelectsAllCharactersCorrectly.txt
 ```
 
 11. Count the number of ERROR and their indices in TODO/checkIfPyScriptSelectsAllCharactersCorrectly.xls and store the results in TODO/resultsOfCheckIfPyScriptSelectsAllCharactersCorrectly.txt
-- (TODO: check the correctness of the pathnames)
+- (TODO: don't use ``hard-wired'' paths)
+- (TODO: check whether it still works within the current directory structure)
+- (TODO: add the missing checkIfPyScriptSelectsAllCharactersCorrectly.py and update the path)
 ```
   $ TODO/checkIfPyScriptSelectsAllCharactersCorrectly.py
 ```
  	
-In 0 cases number of <person> in <listPerson> in English dramas does not match number of files created for each single character in respective drama. The dramas are that on position in list 	›checkIfPyScriptSelectsAllCharactersCorrectlyEnglish.xls‹. The percentage of errors is 0.0 %.
+(In 0 cases number of <person> in <listPerson> in English dramas does not match number of files created for each single character in respective drama. The dramas are that on position in list 	›checkIfPyScriptSelectsAllCharactersCorrectlyEnglish.xls‹. The percentage of errors is 0.0 %.)
