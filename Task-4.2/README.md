@@ -1,5 +1,8 @@
 Scripts for Task 4.2
 
+**Prerequisites**
+- Tensor2tensor v1.6.6 (located at Task-4.2/tensor2tensor-1.6.6)
+
 **General Directory Structure:**
 - **data/** - Directory containing scripts for data download + preprocessing. The datasets are also stored here after download.
 - **scripts/** - Scripts for the training, validation and other utilities.
@@ -25,7 +28,7 @@ Scripts for Task 4.2
 - **scripts/prepare_data.sh**
 ```
     Usage:
-        $ scripts/prepare_data.sh -s SOURCE_CORPUS -t TARGET_CORPUS -o OUTPUT_PATH [OPTIONS]
+        $ scripts/prepare_data.sh -s SOURCE_CORPUS -t TARGET_CORPUS -o OUTPUT_PATH [OPTION]
 
     Options:
         -s, --train-src PATH
@@ -35,9 +38,9 @@ Scripts for Task 4.2
         -o, --output-path PATH
             output path of the data generated for model training
         -u, --user-dir PATH
-            directory containing the custom problem definitions
-        -p, --problem-name STRING
-            name of the problem
+            directory containing the custom problem definitions (default=../user_dir)
+        -p, --problem STRING
+            name of the problem (default=translate_encs_wmt_czeng57m32k)
         --dev-src PATH
             path to the source-side validation corpus
         --dev-tgt PATH
@@ -48,10 +51,10 @@ Scripts for Task 4.2
 - **scripts/train.sh**
 ```
     Usage:
-        $ scripts/train.sh -o OUTPUT_PATH [OPTION]
+        $ scripts/train.sh -m MODEL_DIR [OPTION]
 
     Options:
-        -o, --output-path PATH
+        -m, --model-dir PATH
             model directory (output of prepare_data.sh)
         --gpus INT
             number of gpus used for training (default=1)
@@ -73,44 +76,75 @@ Scripts for Task 4.2
             type of optimizer (default=Adafactor)
         --dropout NUM
             dropout keep probability (default=0.0)
+        -p, --problem STRING
+            name of the problem (default=translate_encs_wmt_czeng57m32k)
 ```
 
-**4. (optional) Run validation during training:**
+**4. (Optional) Run validation during training:**
 - **scripts/validate.sh**
 ```
     Usage:
-        scripts/validate.sh -o OUTPUT_PATH --dev-src SOURCE_DEVSET --dev-tgt TARGET_DEVSET --[OPTION]
+        $ scripts/validate.sh -m MODEL_DIR --dev-src SOURCE_DEVSET --dev-tgt TARGET_DEVSET [OPTION]
 
     Options:
-        -o, --output-path FILE
+        -m, --model-dir PATH
             model directory (output of prepare_data.sh)
         --dev-src FILE
             path to the source-side validation corpus
         --dev-tgt FILE
             path to the target-side validation corpus
+        -p, --problem STRING
+            name of the problem (default=translate_encs_wmt_czeng57m32k)
         -a, --alpha NUM
             beamsearch length penalty (default=0.6)
         -b, --beam-size INT
             beam size (default=4)
         --max-len INT
             maximum sentence length (default=150)
-        --n-checkpoints INT
+        -n, --n-checkpoints INT
             number of checkpoints to average for evaluation (default=8)
 ```
 
-**5. Export (using TF Serving)**
+**5. (Optional) Export (using TF Serving) the final model**
 - **scripts/export.sh**
 ```
     Usage:
-        $ scripts/export.sh -o OUTPUT_PATH --[OPTION]
+        $ scripts/export.sh -m MODEL_DIR --[OPTION]
 
     Options:
-        -o, --output-path PATH
+        -m, model-dir PATH
             model directory (output of prepare_data.sh)
         -a, --alpha NUM
             beamsearch length penalty (default=0.6)
         -b, --beam-size
             beam size (default=4)
+        -p, --problem STRING
+            problem name (default=translate_encs_wmt_czeng57m32k)
         --opts STRING
             additional options
+```
+
+**6. (Optional) Translate text using the final model**
+- **scripts/translate.sh**
+```
+    Usage:
+        $ scripts/translate.sh -i INPUT_FILE -o OUTPUT_FILE -m MODEL_DIR [OPTION]
+
+    Options:
+        -i, --input FILE
+            input file (default=/dev/stdin)
+        -o, --output FILE
+            output file (default=/dev/stdout)
+        -m, --model-dir PATH
+            model directory (output of prepare_data.sh)
+        -a, --alpha NUM
+            beamsearch length penalty (default=1.0)
+        -b, --beam-size INT
+            beam size (default=4)
+        -p, --problem STRING
+            problem name (default=translate_encs_wmt_czeng57m32k)
+        --hparams STRING
+            additional tensor2tensor model parameters
+        -n, --n-checkpoints INT
+            average last N checkpoints (default=8)
 ```
