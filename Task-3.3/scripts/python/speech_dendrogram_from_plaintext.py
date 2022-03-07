@@ -15,7 +15,7 @@ def main(args):
     tfidf_vectors = extract_tfidf_vectors(docs, ngram_range, args.language)
 
     X = np.stack(tfidf_vectors.values(), 0)
-    clusters = hierarchy.linkage(X, method=args.linkage)
+    clusters = hierarchy.linkage(X, method=args.linkage, metric='cosine')
 
     outfile = None
     if args.output_prefix is not None:

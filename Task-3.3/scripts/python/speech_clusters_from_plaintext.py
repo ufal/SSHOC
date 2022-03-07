@@ -16,7 +16,9 @@ def main(args):
 
     X = np.stack(tfidf_vectors.values(), 0)
     alg = AgglomerativeClustering(
-        n_clusters=args.n_clusters, linkage=args.linkage).fit(X)
+        n_clusters=args.n_clusters,
+        linkage=args.linkage,
+        affinity='cosine').fit(X)
     labels = alg.labels_
 
     outfile = None

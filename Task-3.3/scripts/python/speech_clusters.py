@@ -39,18 +39,14 @@ def parse_args():
     parser.add_argument(
         "--language", type=str, default="english",
         help="Input language.")
-## For other texts it can be French, Spanish or other languages. Dušan is interested in respective results with different languages.
     parser.add_argument(
         "--linkage", type=str, default="complete",
         help="Linkage type for agglomerative clustering algorithm.")
     parser.add_argument(
         "--n-clusters", type=int, default=10,
         help="Number of clusters.")
-## Determines in many how groups characters are clustered.
     parser.add_argument(
         "--ngram-range", type=str, default="1,1",
-## Default can be changed to ›1,2‹ or bigger values; Dušan is interested in respective results.
-## "--ngram-range 1,1" uses only single words (1-grams), "--ngram-range 1,2" uses 1-grams and 2-grams, "--ngram-range 2,2" uses 2-grams only, etc.
         help="Min-max n-grams for tf-idf vectorizer.")
     parser.add_argument(
         "--output-prefix", type=str, default=None,

@@ -1,4 +1,5 @@
 # TODO: method argument signatures
+import glob
 import re
 import xml.etree.ElementTree as ET
 
@@ -110,14 +111,26 @@ def xml2docs(filename):
                         "".join(s.itertext()) for s in p.iter('{}s'.format(ns))
                     ])
                 lines.append(line)
-        #if not lines:
-        #    lines = [
-        #        " ".join([
-        #            "".join(w.itertext()) for w in p.iter('{}w'.format(ns))
-        #        ]) for p in e.iter('{}p'.format(ns))
-        #    ]
         for who in who_all:
             res[who] += lines
+    return res
+
+
+def dir2docs(dirname):
+    """Process the input directory containing plaintext files, one per each ``document''.
+
+    """
+    res = {}
+
+    for f in glob.glob('{}/*.txt'.format(dirname)):
+        doc = []
+        with open(f, "r") as fh:
+            for line in fh:
+                line = line.strip()
+                doc.append(line)
+        name = f.split("/")[-1][:-4]  # strip the fullpath and the '.txt' suffix fromt the filename
+        res[name] = doc
+
     return res
 
 
