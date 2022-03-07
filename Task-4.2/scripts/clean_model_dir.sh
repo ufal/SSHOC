@@ -1,5 +1,7 @@
 #!/bin/bash
 # Remove the binarized training files after model training
+set -e
+
 MODEL_DIR=$1
 [[ -d $MODEL_DIR ]] || exit 1
 

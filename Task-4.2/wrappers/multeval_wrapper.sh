@@ -1,11 +1,14 @@
 #!/bin/bash
+set -e
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
+MULTEVAL="$WD/../multeval/multeval.sh"
+
 LANG=$1
 REF=$2
 shift 2
 HYP=$1
 shift
-
-MULTEVAL="/home/varis/tspec-workdir/multeval-0.5.1/multeval.sh"
 
 MULTEVAL_OPTS=""
 while [[ $# -gt 0 ]]; do

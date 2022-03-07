@@ -1,23 +1,10 @@
 #!/bin/bash
-
-# TODO:
-# -- add early stopping
-
 set -e
 
-# Tested with the following virtualenv
-#source /net/me/merkur3/varis/tensorflow-virtualenv/tensorflow-1.12-gpu/bin/activate
-
-# Set CUDA
-CUDA=9.0
-CUDNN=7.1
-export PATH=/opt/cuda/$CUDA/bin:$PATH
-export LD_LIBRARY_PATH=/opt/cuda/$CUDA/lib64:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/opt/cuda/$CUDA/extras/CUPTI/lib64:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/opt/cuda/$CUDA/cudnn/$CUDNN/lib64:$LD_LIBRARY_PATH
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
+T2T_BIN="$WD/../tensor2tensor-1.6.6/tensor2tensor/bin"
 
 # Default parameter values
-OUTPUT_PATH=""
 GPUS=1
 TRAIN_STEPS=6000000
 NUM_KEEP_CHECKPOINTS=20
@@ -29,8 +16,8 @@ LR_SCHEDULE="rsqrt_decay"
 OPTIMIZER="Adafactor"
 DROPOUT=0.0
 
-# Constants
-USER_DIR_PATH="/home/varis/tspec-workdir/t2t-lindat/user_dir"
+MODEL_ROOT=
+
 PROBLEM="translate_encs_wmt_czeng57m32k"
 MODEL="transformer"
 HPARAMS_SET="transformer_big_single_gpu"
@@ -39,9 +26,9 @@ HPARAMS_SET="transformer_big_single_gpu"
 print_usage () {
     echo ""
     echo "      Usage:"
-    echo "      $0 -o OUTPUT_PATH [OPTION]"
+    echo "          $0 -m MODEL_DIR [OPTION]"
     echo ""
-    echo "      -o, --output-path PATH"
+    echo "      -m, --model-dir PATH"
     echo "          model directory (output of prepare_data.sh)"
     echo "      --gpus INT"
     echo "          number of gpus used for training (default=$GPUS)"
@@ -63,19 +50,11 @@ print_usage () {
     echo "          type of optimizer (default=$OPTIMIZER)"
     echo "      --dropout NUM"
     echo "          dropout keep probability (default=$DROPOUT)"
+    echo "      -p, --problem STRING"
+    echo "          name of the problem (default=$PROBLEM)"
     echo ""
     exit 1
 }
-
-
-#--eval_early_stopping_metric=loss
-#--eval_early_stopping_metric_delta=0.1
-#--eval_early_stopping_steps=None
-#--eval_early_stopping_metric_minimize=True
-#--eval_run_autoregressive=False
-
-#--keep_checkpoint_every_n_hours=12
-#--save_checkpoints_secs=3600
 
 
 # Parsing parameters
@@ -83,8 +62,8 @@ while [[ $# -gt 0 ]]; do
     key="$1"
 
     case $key in
-        -o|--output-path)
-            OUTPUT_PATH="$2"
+        -m|--model-dir)
+            MODEL_ROOT="$2"
             shift
         ;;
         --gpus)
@@ -127,6 +106,10 @@ while [[ $# -gt 0 ]]; do
             DROPOUT="$2"
             shift
         ;;
+        -p|--problem)
+            PROBLEM="$2"
+            shift
+        ;;
         *)
             echo Unknown option '"'$key'"' >&2
             exit 1
@@ -135,8 +118,8 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-[[ -n "$OUTPUT_PATH" ]] && [[ -d "$OUTPUT_PATH" ]] || print_usage
-[[ -e "$OUTPUT_PATH/finished" ]] && rm $OUTPUT_PATH/finished
+[[ -n "$MODEL_ROOT" ]] && [[ -d "$MODEL_ROOT" ]] || print_usage
+[[ -e "$MODEL_ROOT/finished" ]] && rm $MODEL_ROOT/finished
 
 # Setting up directories
 DATA_DIR=$OUTPUT_PATH/data
@@ -153,12 +136,12 @@ HPARAMS="$HPARAMS,optimizer=$OPTIMIZER"
 HPARAMS="$HPARAMS,learning_rate_schedule=$LR_SCHEDULE"
 HPARAMS="$HPARAMS,layer_prepostprocess_dropout=$DROPOUT"
 
-# Running datagen
+# Running training
 export PYTHONUNBUFFERED=yes
-export PYTHONPATH="`pwd`/tensor2tensor-1.6.6":$PYTHONPATH
+export PYTHONPATH="$WD/../tensor2tensor-1.6.6":$PYTHONPATH
 
-echo "Running: tensor2tensor-1.6.6/tensor2tensor/bin/t2t-trainer --t2t_usr_dir=$USER_DIR --data_dir=$DATA_DIR --problem=$PROBLEM --model=$MODEL --hparams_set=$HPARAMS_SET --hparams=$HPARAMS --output_dir=$MODEL_DIR --train_steps=$TRAIN_STEPS --local_eval_frequency=10000 --schedule=train --keep_checkpoint_max=$NUM_KEEP_CHECKPOINTS --worker_gpu=$GPUS" >&2
-tensor2tensor-1.6.6/tensor2tensor/bin/t2t-trainer \
+echo "Running: $T2T_BIN/t2t-trainer --t2t_usr_dir=$USER_DIR --data_dir=$DATA_DIR --problem=$PROBLEM --model=$MODEL --hparams_set=$HPARAMS_SET --hparams=$HPARAMS --output_dir=$MODEL_DIR --train_steps=$TRAIN_STEPS --local_eval_frequency=10000 --schedule=train --keep_checkpoint_max=$NUM_KEEP_CHECKPOINTS --worker_gpu=$GPUS" >&2
+$T2T_BIN/t2t-trainer \
     --t2t_usr_dir=$USER_DIR \
     --data_dir=$DATA_DIR \
     --problem=$PROBLEM \

@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-WD=`pwd`
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
 
 echo "Cloning SacreBLEU repository (for newstest data download)"
 [[ -d "sacrebleu" ]] || git clone https://github.com/mjpost/sacrebleu.git

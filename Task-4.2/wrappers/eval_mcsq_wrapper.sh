@@ -1,20 +1,16 @@
 #!/bin/bash
-source $HOME/python-virtualenv/fairseq-env/bin/activate
-BASEDIR="/home/varis/tspec-workdir/t2t-lindat"
+set -e
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
+BASEDIR="$WD/.."
 LANGUAGES="de ru"
 SET="test"
-
 
 SYS_PREFIX=${1:-"$BASEDIR/output/model_comparison/baseline"}
 N_CHECKPOINTS=${2:-8}
 BS=${3:-4}
 ALPHA=${4:-1.0}
 
-
-# We evaluate the models either on following testsets:
-# - valid: data/sshoc-mcsq-surveys/dev.en-*.shuf
-# - test: data/sshoc-mcsq-surveys/test.en-*.shuf
-# We use aliases for easier evaluation automation (see links for location of the original files)
 
 # Translation
 all_jid=
@@ -56,12 +52,12 @@ done
         
 # Evaluation
 for l in $LANGUAGES; do
-    scripts/multeval_wrapper.sh \
+    wrappers/multeval_wrapper.sh \
         $l \
         "$BASEDIR/eval/datasets/mcsq.$SET.en-$l.$l.txt" \
         "$BASEDIR/eval/outputs/mcsq.$SET.en-$l.$l.${SYS_PREFIX##*/}.ckpt-$N_CHECKPOINTS.bs-$BS.alpha-$ALPHA.decoded" \
         > "$BASEDIR/eval/results/mcsq.$SET.en-$l.$l.${SYS_PREFIX##*/}.ckpt-$N_CHECKPOINTS.bs-$BS.alpha-$ALPHA.scores"
-    scripts/multeval_wrapper.sh \
+    wrappers/multeval_wrapper.sh \
         en \
         "$BASEDIR/eval/datasets/mcsq.$SET.en-$l.en.txt" \
         "$BASEDIR/eval/outputs/mcsq.$SET.en-$l.en.${SYS_PREFIX##*/}.ckpt-$N_CHECKPOINTS.bs-$BS.alpha-$ALPHA.decoded" \

@@ -2,7 +2,8 @@
 # Translate English part of the other language pairs to create
 # additional $TGT-en synthetic parallel data
 set -e
-WD=`pwd`
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
 
 MODEL_DIR=$1
 T2T_LOCATION=$WD/../tensor2tensor-1.6.6

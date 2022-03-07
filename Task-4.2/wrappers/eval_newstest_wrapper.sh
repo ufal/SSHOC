@@ -1,17 +1,14 @@
 #!/bin/bash
-source $HOME/python-virtualenv/fairseq-env/bin/activate
-BASEDIR="/home/varis/tspec-workdir/t2t-lindat"
+set -e
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
+BASEDIR="$WD/.."
 LANGUAGES="cs de fr hi pl ru"
 
 SYS_PREFIX=${1:-"$BASEDIR/output/system_aliases/baseline"}
 N_CHECKPOINTS=${2:-8}
 BS=${3:-4}
 ALPHA=${4:-1.0}
-
-# We evaluate the models either on following testsets:
-# - newstest2014 (cs, fr, hi)
-# - newstest2020 (pl, de, ru)
-# We use aliases for easier evaluation automation (see links for location of the original files)
 
 # Translation
 all_jid=
@@ -53,12 +50,12 @@ done
         
 # Evaluation
 for l in $LANGUAGES; do
-    scripts/multeval_wrapper.sh \
+    wrappers/multeval_wrapper.sh \
         $l \
         "$BASEDIR/eval/datasets/newstest-${l}en-ref.$l.txt" \
         "$BASEDIR/eval/outputs/newstest.${l}en.$l.${SYS_PREFIX##*/}.ckpt-$N_CHECKPOINTS.bs-$BS.alpha-$alpha.decoded" \
         > "$BASEDIR/eval/results/newstest.${l}en.$l.${SYS_PREFIX##*/}.ckpt-$N_CHECKPOINTS.bs-$BS.alpha-$alpha.scores"
-    scripts/multeval_wrapper.sh \
+    wrappers/multeval_wrapper.sh \
         en \
         "$BASEDIR/eval/datasets/newstest-${l}en-ref.en.txt" \
         "$BASEDIR/eval/outputs/newstest.${l}en.en.${SYS_PREFIX##*/}.ckpt-$N_CHECKPOINTS.bs-$BS.alpha-$alpha.decoded" \

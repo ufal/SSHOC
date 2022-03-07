@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-WD=`pwd`
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
 
 URL=https://repo.clarino.uib.no/xmlui/bitstream/handle/11509/142/mcsq_v3.zip
 

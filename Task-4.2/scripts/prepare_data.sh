@@ -1,31 +1,24 @@
 #!/bin/bash
-CUDA=9.0
-CUDNN=7.1
-
 set -e
 
-# Tested with the following virtualenv
-#source /net/me/merkur3/varis/tensorflow-virtualenv/tensorflow-1.12-gpu/bin/activate
-
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
+T2T_BIN="$WD/../tensor2tensor-1.6.6/tensor2tensor/bin"
 
 # Default parameter values
-GPUS=0
 SRC_TRAIN_PATH=""
 TGT_TRAIN_PATH=""
 SRC_DEV_PATH=""
 TGT_DEV_PATH=""
 OUTPUT_PATH=""
 
-# Constants
-USER_DIR_PATH="/home/varis/tspec-workdir/t2t-lindat/user_dir"
-#PROBLEM="translate32k"
+USER_DIR_PATH="$WD/../user_dir"
 PROBLEM="translate_encs_wmt_czeng57m32k"
 
 
 print_usage () {
     echo ""
     echo "      Usage:"
-    echo "      $0 -s SOURCE_CORPUS -t TARGET_CORPUS -o OUTPUT_PATH [OPTIONS]"
+    echo "          $0 -s SOURCE_CORPUS -t TARGET_CORPUS -o OUTPUT_PATH [OPTION]"
     echo ""
     echo "      -s, --train-src PATH"
     echo "          path to the source-side training corpus"
@@ -34,9 +27,9 @@ print_usage () {
     echo "      -o, --output-path PATH"
     echo "          output path of the data generated for model training"
     echo "      -u, --user-dir PATH"
-    echo "          directory containing the custom problem definitions"
-    echo "      -p, --problem-name STRING"
-    echo "          name of the problem"
+    echo "          directory containing the custom problem definitions (default=$USER_DIR_PATH)"
+    echo "      -p, --problem STRING"
+    echo "          name of the problem (default=$PROBLEM)"
     echo "      --dev-src PATH"
     echo "          path to the source-side validation corpus"
     echo "      --dev-tgt PATH"
@@ -67,7 +60,7 @@ while [[ $# -gt 0 ]]; do
             USER_DIR_PATH="$2"
             shift
         ;;
-        -p|--problem-name)
+        -p|--problem)
             PROBLEM="$2"
             shift
         ;;
@@ -79,10 +72,6 @@ while [[ $# -gt 0 ]]; do
             TGT_DEV_PATH="$2"
             shift
         ;;
-        --gpus)
-            GPUS="$2"
-            shift
-        ;;
         *)
             echo Unknown option '"'$key'"' >&2
             exit 1
@@ -91,18 +80,6 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# Source correct virtualenv and (optional) set paths to CUDA libraries
-if [[ $GPUS -eq 0 ]]; then
-    echo "--gpus 0: Activating virtualenv..."
-    source $HOME/python-virtualenv/tensorflow-1.12-cpu/bin/activate
-else
-    echo "--gpus > 0: Activating virtualenv and setting CUDA variables..."
-    source $HOME/python-virtualenv/tensorflow-1.12-gpu/bin/activate
-    PATH=/opt/cuda/$CUDA/bin:
-    LD_LIBRARY_PATH=/opt/cuda/$CUDA/cudnn/$CUDNN/lib64:$LD_LIBRARY_PATH
-    LD_LIBRARY_PATH=/opt/cuda/$CUDA/extras/CUPTI/lib64:$LD_LIBRARY_PATH
-    LD_LIBRARY_PATH=/opt/cuda/$CUDA/lib64:$LD_LIBRARY_PATH
-fi
 
 # Testing (required) parameter values
 if [[ ( ! -e "$SRC_TRAIN_PATH" || ! -e "$TGT_TRAIN_PATH" ) ]]; then
@@ -136,10 +113,10 @@ fi
 
 # Running datagen
 export PYTHONUNBUFFERED=yes
-export PYTHONPATH="`pwd`/tensor2tensor-1.6.6":$PYTHONPATH
+export PYTHONPATH="$WD/../tensor2tensor-1.6.6":$PYTHONPATH
 
-echo "Running: tensor2tensor-1.6.6/tensor2tensor/bin/t2t-datagen --t2t_usr_dir=$USER_DIR --data_dir=$DATA_DIR --tmp_dir=$TMP_DIR --problem=$PROBLEM" >&2
-tensor2tensor-1.6.6/tensor2tensor/bin/t2t-datagen \
+echo "Running: $T2T_BIN/t2t-datagen --t2t_usr_dir=$USER_DIR --data_dir=$DATA_DIR --tmp_dir=$TMP_DIR --problem=$PROBLEM" >&2
+$T2T_BIN/t2t-datagen \
     --t2t_usr_dir=$USER_DIR \
     --data_dir=$DATA_DIR \
     --tmp_dir=$TMP_DIR \

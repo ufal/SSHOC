@@ -1,7 +1,8 @@
 #!/bin/bash
 # Combine the raw $LANGPAIR WMT and MCSQ data
 set -e
-WD=`pwd`
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
 
 SRC=${1:-de}
 TGT=en

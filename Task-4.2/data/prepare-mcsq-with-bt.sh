@@ -1,7 +1,8 @@
 #!/bin/bash
 # Combine the raw $LANGPAIR MCSQ data with the backtranslated data
 set -e
-WD=`pwd`
+
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
 
 SRC=${1:-de}
 TGT=en

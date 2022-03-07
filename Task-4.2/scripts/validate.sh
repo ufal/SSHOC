@@ -1,26 +1,23 @@
 #!/bin/bash
+set -e
 
-# Tested with the following virtualenv
-#source /net/me/merkur3/varis/tensorflow-virtualenv/tensorflow-1.12-cpu/bin/activate
-
+WD=`dirname "$(readlink -f "$0")"`  # location of the script
+T2T_BIN="$WD/../tensor2tensor-1.6.6/tensor2tensor/bin"
 
 # Default parameter values
-OUTPUT_PATH=""
 SRC_DEV_PATH=""
 TGT_DEV_PATH=""
+
 ALPHA=0.6
 BEAM_SIZE=4
 MAX_LEN=150
 N_CHECKPOINTS=8
 
-#--decode_hparams=max_input_size=$MAX_LENGTH
-#--decode_to_file=$TMP_DIR/translated.txt
+MODEL_ROOT=
 
-# Constants
 GPU_MEM=8g
 CPU_MEM=8g
 CORES=1
-T2T_BIN=tensor2tensor-1.6.6/tensor2tensor/bin
 WAIT_TIME=10000
 SLEEP_TIME="30m"
 PROBLEM="translate_encs_wmt_czeng57m32k"
@@ -30,21 +27,23 @@ HPARAMS_SET="transformer_big_single_gpu"
 print_usage () {
     echo ""
     echo "      Usage:"
-    echo "      $0 -o OUTPUT_PATH --dev-src SOURCE_DEVSET --dev-tgt TARGET_DEVSET --[OPTION]"
+    echo "          $0 -m MODEL_DIR --dev-src SOURCE_DEVSET --dev-tgt TARGET_DEVSET [OPTION]"
     echo ""
-    echo "      -o, --output-path FILE"
+    echo "      -m, --model-dir PATH"
     echo "          model directory (output of prepare_data.sh)"
     echo "      --dev-src FILE"
     echo "          path to the source-side validation corpus"
     echo "      --dev-tgt FILE"
     echo "          path to the target-side validation corpus"
+    echo "      -p, --problem STRING"
+    echo "          name of the problem (default=$PROBLEM)"
     echo "      -a, --alpha NUM"
     echo "          beamsearch length penalty (default=$ALPHA)"
     echo "      -b, --beam-size INT"
     echo "          beam size (default=$BEAM_SIZE)"
     echo "      --max-len INT"
     echo "          maximum sentence length (default=$MAX_LEN)"
-    echo "      --n-checkpoints INT"
+    echo "      -n, --n-checkpoints INT"
     echo "          number of checkpoints to average for evaluation (default=$N_CHECKPOINTS)"
     echo ""
     exit 1
@@ -56,8 +55,8 @@ while [[ $# -gt 0 ]]; do
     key="$1"
 
     case $key in
-        -o|--output-path)
-            OUTPUT_PATH="$2"
+        -m|--model-dir)
+            MODEL_ROOT="$2"
             shift
         ;;
         --dev-src)
@@ -66,6 +65,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         --dev-tgt)
             TGT_DEV_PATH="$2"
+            shift
+        ;;
+        -p|--problem)
+            PROBLEM="$2"
             shift
         ;;
         -a|--alpha)
@@ -80,7 +83,7 @@ while [[ $# -gt 0 ]]; do
             MAX_LEN="$2"
             shift
         ;;
-        --n-checkpoints)
+        -n|--n-checkpoints)
             N_CHECKPOINTS="$2"
             shift
         ;;
@@ -92,18 +95,19 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+
 # Testing (required) parameter values
 if [[ ( ! -e "$SRC_DEV_PATH"  || ! -e "$TGT_DEV_PATH" ) ]]; then
     print_usage
 fi
-[[ -n "$OUTPUT_PATH" ]] && [[ -d "$OUTPUT_PATH" ]] || print_usage
+[[ -n "$MODEL_ROOT" ]] && [[ -d "$MODEL_ROOT" ]] || print_usage
 
 # Setting up directories
-DATA_DIR=$OUTPUT_PATH/data
-TMP_DIR=$OUTPUT_PATH/tmp_dir
-USER_DIR=$OUTPUT_PATH/user_dir
-MODEL_DIR=$OUTPUT_PATH/model
-EVAL_DIR=$OUTPUT_PATH/eval_dir
+DATA_DIR=$MODEL_ROOT/data
+TMP_DIR=$MODEL_ROOT/tmp_dir
+USER_DIR=$MODEL_ROOT/user_dir
+MODEL_DIR=$MODEL_ROOT/model
+EVAL_DIR=$MODEL_ROOT/eval_dir
 
 LOGS_DIR=$EVAL_DIR/logs
 EVENTS_DIR=$EVAL_DIR/output
@@ -114,12 +118,12 @@ mkdir -p $TRANSLATIONS_DIR
 
 # Setting ENV
 export PYTHONUNBUFFERED=yes
-export PYTHONPATH="`pwd`/tensor2tensor-1.6.6":$PYTHONPATH
+export PYTHONPATH="$WD/../tensor2tensor-1.6.6":$PYTHONPATH
 
 # Command for t2t-translate-all
-QSUB_CMD="source $HOME/python-virtualenv/tensorflow-1.12-gpu/bin/activate"
-QSUB_CMD="$QSUB_CMD && export LD_LIBRARY_PATH=/opt/cuda/9.0/cudnn/7.0/lib64:/opt/cuda/9.0/extras/CUPTI/lib64:/opt/cuda/9.0/lib64:/home/varis/.local/lib:/home/varis/poco/lib:/usr/lib:"
-QSUB_CMD="$QSUB_CMD && export PYTHONPATH="`pwd`/tensor2tensor-1.6.6":$PYTHONPATH"
+# NOTE: You need to set these locations manually
+QSUB_CMD="source $PYTHON_VENV/bin/activate"
+QSUB_CMD="$QSUB_CMD && export PYTHONPATH="$WD/../tensor2tensor-1.6.6":$PYTHONPATH"
 QSUB_CMD="$QSUB_CMD && export PYTHONUNBUFFERED=yes"
 QSUB_CMD="$QSUB_CMD && $T2T_BIN/t2t-decoder {params}"
 
