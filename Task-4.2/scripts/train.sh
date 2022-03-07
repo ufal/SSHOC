@@ -122,10 +122,10 @@ done
 [[ -e "$MODEL_ROOT/finished" ]] && rm $MODEL_ROOT/finished
 
 # Setting up directories
-DATA_DIR=$OUTPUT_PATH/data
-TMP_DIR=$OUTPUT_PATH/tmp_dir
-USER_DIR=$OUTPUT_PATH/user_dir
-MODEL_DIR=$OUTPUT_PATH/model
+DATA_DIR=$MODEL_ROOT/data
+TMP_DIR=$MODEL_ROOT/tmp_dir
+USER_DIR=$MODEL_ROOT/user_dir
+MODEL_DIR=$MODEL_ROOT/model
 
 # Setting up hparams
 HPARAMS="batch_size=$BATCH_SIZE"
