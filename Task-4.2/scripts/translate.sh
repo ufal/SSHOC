@@ -89,6 +89,9 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+# Testing (required) parameter values
+[[ -n "$MODEL_ROOT" ]] && [[ -d "$MODEL_ROOT" ]] || print_usage
+
 #Setting up directories
 DATA_DIR=$MODEL_ROOT/data
 TMP_DIR=$MODEL_ROOT/tmp_dir

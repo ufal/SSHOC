@@ -17,7 +17,7 @@ HPARAMS_SET="transformer_big_single_gpu"
 print_usage () {
     echo ""
     echo "      Usage:"
-    echo "      $0 -m MODEL_DIR --[OPTION]"
+    echo "          $0 -m MODEL_DIR [OPTION]"
     echo ""
     echo "      -m, model-dir PATH"
     echo "          model directory (output of prepare_data.sh)"
