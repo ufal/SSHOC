@@ -51,6 +51,10 @@ while [[ $# -gt 0 ]]; do
             BEAM_SIZE="$2"
             shift
         ;;
+        -p|--problem)
+            PROBLEM="$2"
+            shift
+        ;;
         --opts)
             CUSTOM_OPTS="$2"
             shift
@@ -79,4 +83,5 @@ $T2T_BIN/t2t-exporter \
 	--hparams_set=$HPARAMS_SET \
 	--output_dir=$MODEL_ROOT/model \
 	--problem=$PROBLEM \
-	--decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA,write_beam_scores=False,return_beams=False"
+	--decode_hparams="beam_size=$BEAM_SIZE,alpha=$ALPHA,write_beam_scores=False,return_beams=False" \
+    $CUSTOM_OPTS
