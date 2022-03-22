@@ -1,7 +1,10 @@
-Scripts for Task 4.2
+# Scripts for Task 4.2
 
 **Prerequisites**
 - Tensor2tensor v1.6.6 (located at Task-4.2/tensor2tensor-1.6.6)
+
+**Pretrained models**
+- Available in Lindat repository: [en-de](https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-4680), [en-ru](https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-4681).
 
 **General Directory Structure:**
 - **data/** - Directory containing scripts for data download + preprocessing. The datasets are also stored here after download.
