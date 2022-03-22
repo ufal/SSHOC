@@ -1,4 +1,4 @@
-Scripts used for Task 3.3
+# Scripts used for Task 3.3
 
 **General Directory Structure:**
 - **scripts/python** - Python scripts used mainly for character utterance extraction and TF-IDF clustering analysis
